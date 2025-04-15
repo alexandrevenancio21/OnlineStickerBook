@@ -1,0 +1,273 @@
+{% extends "./homepage.html" %}
+
+{% block title %}
+<title>Página Pessoal</title>
+{% load static %}
+{% endblock %}
+
+{% block estilo %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    header {
+        max-width: 1320px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+
+    .container {
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    h2 {
+        color: #333;
+        text-align: center;
+    }
+
+    h3 {
+        color: #666;
+        text-align: center;
+    }
+
+    p {
+        color: #444;
+        margin-bottom: 10px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .divisao {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+
+    .saldo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .botao {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .botao-depositar {
+        background-color: #1497ef;
+        color: white;
+    }
+
+    .perfil-img {
+        border-radius: 50%;
+        width: 150px; /* Ajuste o tamanho conforme necessário */
+        height: 150px; /* Ajuste o tamanho conforme necessário */
+        object-fit: cover; /* Isso garante que a imagem mantenha suas proporções */
+    }
+
+    .logout_btn {
+        margin-bottom: 20px;
+    }
+
+</style>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+<!-- Scripts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="{% static 'caderneta/JS/js_info.js' %}"></script>
+
+{% endblock %}
+
+{% block navbar %}
+<ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+    <h2>Página Pessoal</h2>
+</ul>
+{% endblock %}
+
+{% block info %}
+<div class="col-md-3 text-end ">
+    <a href="{% url 'caderneta:homepage' %}" class="contact btn btn-secondary me-2">Homepage</a>
+</div>
+{% endblock %}
+
+
+{% block corpo %}
+
+<div class="divisao">
+    <img src="{% url 'caderneta:load_image' %}" class="perfil-img">
+    <h2>{{ utilizador.user }}</h2>
+
+    <div class="saldo">
+        <span> Número de cromos do {{utilizador}}:</span>
+        <span>{{ n_cromos }}</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'caderneta:info_user' %}">
+        {% csrf_token %}
+        <label for="myfile" class="btn btn-primary">
+            Mudar imagem de perfil
+        </label>
+        <input id="myfile" type="file" name="myfile" style="display:none;" onchange="this.form.submit();">
+        <input type="submit" value="Submit" style="display:none;">
+    </form>
+</div>
+
+<br>
+
+{% if messages %}
+<ul class="messages" style="list-style-type: none; text-align: center;">
+    {% for message in messages %}
+    <li style="color: green; font-weight: bold;">
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} {% endif %}
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+<meta http-equiv="refresh" content="5;url={% url 'caderneta:info_user' %}">
+{% endif %}
+
+<div class="divisao">
+    <h3>Saldo da conta</h3>
+
+    <hr>
+
+    <div class="saldo">
+        <span style="float: left;">Saldo Disponível:</span>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+            <button id="mostrar_saldo" class="btn btn-outline-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye"
+                     viewBox="0 0 16 16">
+                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                </svg>
+            </button>
+            <button id="esconder_saldo" class="btn btn-outline-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-eye-slash" viewBox="0 0 16 16">
+                    <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+                    <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                    <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+                </svg>
+            </button>
+            <span id="saldo_utilizador" style="float: left;">{{ utilizador.saldo }} € </span>
+        </div>
+    </div>
+
+    <hr>
+
+    <form action="{% url 'caderneta:add_saldo' %}" method="post">
+        {% csrf_token %}
+        <div class="container">
+            <div class="d-flex">
+                <div class="form-floating me-2">
+                    <input type="number" class="form-control" id="add_saldo" name="add_saldo" required value="0"
+                           required min="0">
+                    <label for="add_saldo">Saldo a adicionar:</label>
+                </div>
+                <button class="botao botao-depositar">Depositar saldo</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<br>
+
+<div class="divisao">
+
+    <div class="saldo">
+        <span> Username: </span>
+        <span>{{ utilizador.user }}</span>
+    </div>
+
+    <div class="saldo">
+        <span> Email: </span>
+        <span> {{ utilizador.user.email }} </span>
+    </div>
+
+    <div class="saldo">
+        <span> Data de nascimento: </span>
+        <span>{{ utilizador.data_nascimento }}</span>
+    </div>
+</div>
+
+<br>
+
+<a href="{% url 'caderneta:logout_user' %}" class="logout_btn contact btn btn-danger me-2">Logout</a>
+<script>
+    $(document).ready(function () {
+        // Ocultar botão de envio inicialmente
+        $("input[type='submit']").hide();
+
+        // Função para mostrar ou ocultar botão de envio com base na seleção do arquivo
+        $("#myfile").change(function () {
+            if ($(this).val()) { // Se um arquivo for selecionado
+                $("input[type='submit']").show(); // Mostrar botão de envio
+            } else {
+                $("input[type='submit']").hide(); // Ocultar botão de envio se nenhum arquivo for selecionado
+            }
+        });
+
+        // Seu código existente para mostrar/ocultar saldo
+        $("#saldo_utilizador").hide();
+        $("#esconder_saldo").hide();
+
+        $("#mostrar_saldo").click(function () {
+            $("#mostrar_saldo").hide();
+            $("#saldo_utilizador").show();
+            $("#esconder_saldo").show();
+        });
+
+        $("#esconder_saldo").click(function () {
+            $("#saldo_utilizador").hide();
+            $("#esconder_saldo").hide();
+            $("#mostrar_saldo").show();
+        });
+    });
+</script>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

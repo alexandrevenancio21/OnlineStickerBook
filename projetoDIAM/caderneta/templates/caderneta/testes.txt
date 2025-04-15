@@ -1,0 +1,81 @@
+def apagar_pacote_2(request, pacote_id):
+    pacote = Pacote.objects.get(id=pacote_id)
+    pacote.delete()
+    return redirect('caderneta:loja')
+
+
+def apagar_pacote_2(request):
+    pacote_id = request.POST.get('pacote_id')
+    pacote = Pacote.objects.get(id=pacote_id)
+    pacote.delete()
+    return redirect('caderneta:loja')
+
+
+
+<form method="post" action="{% url 'caderneta:apagar_pacote_2' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="pacote_id" name="pacote_id" value="{{ pacote_id }}">
+                        <button type="submit" class="btn btn-primary">
+                            Guardar alterações
+                        </button>
+                    </form>
+
+
+
+
+
+
+                    <form method="post" action="{% url 'caderneta:apagar_pacote_2' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="pacote_id" name="pacote_id" value="{{ pacote_id }}">
+                        <button type="submit" class="btn btn-primary">
+                            Guardar alterações
+                        </button>
+                    </form>
+
+
+
+----------------------------------------------------------
+
+function ApagarPacote() {
+     const criarPost = (event) => {
+        event.preventDefault() //faz com que nao faça reload ao formulario para poder entrar na loja do site outra vez
+        let obj = {
+            'titulo': titulo,
+            'descricao': descricao,
+            'preco': preco,
+            'qntCromos': qntCromos,
+            'imagem': imagem
+        }
+
+        axios.post("http://localhost:8001/caderneta/api/criar_pacote/", obj)
+            .then(res => {
+                window.location.href = 'http://127.0.0.1:8001/caderneta/loja';
+                }
+            );
+    }
+
+    return(
+
+    )
+}
+
+
+
+
+-----------------------------------
+
+
+
+@api_view(['DELETE'])
+def apagar_pacote(request, pacote_id):
+    pacote = Pacote.objects.get(id=pacote_id)
+    pacote.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+---------------
+
+utilizador = Utilizador.objects.get(user=request.user)
+    caderneta = Caderneta.objects.filter(utilizador=utilizador).order_by('cromo_id')
+    n_cromos = caderneta.count()
+

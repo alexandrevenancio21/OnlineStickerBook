@@ -1,0 +1,101 @@
+{% extends "./homepage.html" %}
+{% load static %}
+{% block title %}
+  <title>Caderneta</title>
+{% endblock %}
+
+{% block estilo %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'caderneta/CSS/style.css' %}">
+    <style>
+        .divisao {
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            justify-content: center;
+            padding: 20px 0 20px 25px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .cromo{
+            width: 350px;
+            margin: 10px;
+            border-radius: 0;
+            box-shadow: 20px 20px rgba(0,0,0,.15);
+        }
+
+        .card{
+            border-radius: 0;
+        }
+
+        .cromo_imagem{
+            width: 100%; /* garantir que a imagem ocupe toda a largura do contêiner */
+            height: 215px; /* altura automática para manter a proporção */
+        }
+
+        @media (max-width:1399px){
+            .cromo{
+                width: 300px;
+            }
+
+            .cromo_imagem{
+                height: 184px;
+            }
+        }
+
+        @media (max-width:1200px){
+            .divisao {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .cromo_nome{
+            font-family: "Anton", sans-serif;
+            font-size: 2.5rem;
+        }
+
+        .row>* {
+            padding-right: 0;
+            padding-left: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block navbar %}
+    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="{% url 'caderneta:homepage' %}" class="nav-link px-2 link-secondary">Home</a></li>
+        <li><a href="{% url 'caderneta:loja' %}" class="nav-link px-2 link-secondary">Loja</a></li>
+        <li><a href="{% url 'caderneta:forum' %}" class="nav-link px-2 link-secondary">Forum</a></li>
+        <li><a href="{% url 'caderneta:caderneta' %}" class="nav-link px-2 link-dark">Caderneta</a></li>
+    </ul>
+{% endblock %}
+
+{% block corpo %}
+    <div class="container" style=" margin: 0 auto">
+        <h1>Os Teus Jogadores <span class="text-body-secondary" style="float: right">{{ n_cromos }} cromos de 23</span></h1>
+    </div>
+    {% if caderneta %}
+        <div class="container divisao row row-cols-1 row-cols-md-3 mb-3 text-center">
+            {% for cromo_caderneta in caderneta %}
+                <div class="col cromo">
+                    <div class="card shadow-sm">
+                        <img src="{% static cromo_caderneta.cromo.imagem %}" alt="{{ cromo_caderneta.cromo.nome }}" class="cromo_imagem">
+                        <div class="card-body">
+                            <h2 class="cromo_nome">{{ cromo_caderneta.cromo.nome }}</h2>
+                            <hr>
+                            <h4>{{ cromo_caderneta.cromo.selecao }}</h4>
+                            <h5>{{ cromo_caderneta.cromo.posicao }}</h5>
+                            <small class="text-body-secondary" style="float: right">Quantidade: {{ cromo_caderneta.quantidade }}</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="font-weight: bold; text-align: center; color: red">Não tens cromos.</p>
+    {% endif %}
+{% endblock %}
